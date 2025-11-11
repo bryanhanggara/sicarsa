@@ -1,26 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Authentication Routes
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::post('/login', function () {
-    // Handle login logic here
-    return redirect()->route('dashboard');
-})->name('login.post');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
-Route::post('/register', function () {
-    // Handle registration logic here
-    return redirect()->route('login')->with('success', 'Pendaftaran berhasil! Silakan login.');
-})->name('register.post');
+require __DIR__.'/auth.php';

@@ -29,21 +29,31 @@
         @csrf
         
         <div class="mb-3">
-            <label for="nik" class="form-label">Nomor Induk Keluarga</label>
-            <input type="text" class="form-control @error('nik') is-invalid @enderror" 
-                   id="nik" name="nik" placeholder="NIK Pendaftar" 
-                   value="{{ old('nik') }}" required>
-            @error('nik')
+            <label for="name" class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                   id="name" name="name" placeholder="Nama Lengkap" 
+                   value="{{ old('name') }}" required autofocus>
+            @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
         
         <div class="mb-3">
-            <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
-            <input type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" 
-                   id="nama_lengkap" name="nama_lengkap" placeholder="Nama Lengkap" 
-                   value="{{ old('nama_lengkap') }}" required>
-            @error('nama_lengkap')
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                   id="email" name="email" placeholder="Email" 
+                   value="{{ old('email') }}" required>
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        
+        <div class="mb-3">
+            <label for="nik" class="form-label">Nomor Induk Keluarga</label>
+            <input type="text" class="form-control @error('nik') is-invalid @enderror" 
+                   id="nik" name="nik" placeholder="NIK Pendaftar" 
+                   value="{{ old('nik') }}" required>
+            @error('nik')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -73,24 +83,39 @@
             </div>
         </div>
         
-        <div class="mb-4">
-            <label for="jenjang_pendidikan" class="form-label">Jenjang Pendidikan Yang Dituju</label>
+        <div class="mb-3">
+            <label for="jenjang_yang_dituju" class="form-label">Jenjang Pendidikan Yang Dituju</label>
             <div class="input-group">
-                <select class="form-select @error('jenjang_pendidikan') is-invalid @enderror" 
-                        id="jenjang_pendidikan" name="jenjang_pendidikan" required>
+                <select class="form-select @error('jenjang_yang_dituju') is-invalid @enderror" 
+                        id="jenjang_yang_dituju" name="jenjang_yang_dituju" required>
                     <option value="">Pilih Jenjang Pendidikan</option>
-                    <option value="SD" {{ old('jenjang_pendidikan') == 'SD' ? 'selected' : '' }}>SD</option>
-                    <option value="SMP" {{ old('jenjang_pendidikan') == 'SMP' ? 'selected' : '' }}>SMP</option>
-                    <option value="SMA" {{ old('jenjang_pendidikan') == 'SMA' ? 'selected' : '' }}>SMA</option>
-                    <option value="SMK" {{ old('jenjang_pendidikan') == 'SMK' ? 'selected' : '' }}>SMK</option>
+                    <option value="MI" {{ old('jenjang_yang_dituju') == 'MI' ? 'selected' : '' }}>MI</option>
+                    <option value="MTs" {{ old('jenjang_yang_dituju') == 'MTs' ? 'selected' : '' }}>MTs</option>
+                    <option value="MA" {{ old('jenjang_yang_dituju') == 'MA' ? 'selected' : '' }}>MA</option>
                 </select>
                 <span class="input-group-text">
                     <i class="bi bi-chevron-down"></i>
                 </span>
-                @error('jenjang_pendidikan')
+                @error('jenjang_yang_dituju')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                   id="password" name="password" placeholder="Password" required>
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+        
+        <div class="mb-4">
+            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+            <input type="password" class="form-control" 
+                   id="password_confirmation" name="password_confirmation" 
+                   placeholder="Konfirmasi Password" required>
         </div>
         
         <button type="submit" class="btn btn-primary">Daftar Sekarang</button>
@@ -100,4 +125,3 @@
         </div>
     </form>
 @endsection
-

@@ -8,7 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
         :root {
             --primary-color: #0d9488;
             --secondary-color: #14b8a6;
@@ -17,17 +20,25 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            font-family: 'Figtree', sans-serif;
+            
             min-height: 100vh;
         }
         
         .sidebar {
-            background: linear-gradient(180deg, #5eead4 0%, #2dd4bf 100%);
+            background: #B6DFDD;
             border-radius: 0 20px 20px 0;
             padding: 3rem 2rem;
-            color: #0f766e;
-            min-height: 100vh;
+            color: #127499;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* <— ini bikin konten di tengah horizontal */
+            text-align: center;  /* opsional untuk h2 */
+
+
         }
         
         .sidebar h2 {
@@ -39,8 +50,10 @@
         .step-item {
             display: flex;
             align-items: flex-start;
+            justify-content: flex-start;
             margin-bottom: 2rem;
-            position: relative;
+            width: 100%; /* biar lebar penuh */
+            max-width: 350px; /* supaya tidak terlalu melebar */
         }
         
         .step-icon {
@@ -48,7 +61,6 @@
             height: 50px;
             border-radius: 50%;
             background: white;
-            border: 3px solid #14b8a6;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,14 +73,16 @@
         .step-content h5 {
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #0f766e;
+            color: #303030;
+            text-align: left;
         }
         
         .step-content p {
             font-size: 0.9rem;
             margin: 0;
-            color: #0f766e;
+            color: #303030;
             opacity: 0.9;
+            text-align: left;
         }
         
         .main-content {
@@ -104,11 +118,16 @@
             color: var(--dark-teal);
             font-weight: 700;
             margin-bottom: 0.5rem;
+            text-align: center;
+            font-size: 30px;
         }
         
         .page-subtitle {
             color: #64748b;
             margin-bottom: 2rem;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 200;
         }
         
         .role-tabs {
@@ -217,7 +236,7 @@
     <div class="container-fluid p-0">
         <div class="row g-0">
             <!-- Sidebar -->
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <div class="sidebar">
                     <h2>Langkah-Langkah Pendaftaran</h2>
                     <div class="step-item">
@@ -269,7 +288,7 @@
             </div>
             
             <!-- Main Content -->
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <div class="main-content d-flex align-items-center justify-content-center">
                     <div class="w-100" style="max-width: 500px;">
                         @yield('content')
