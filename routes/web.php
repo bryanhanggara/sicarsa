@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [BiodataSantriController::class, 'index'])->name('biodata-santri.index');
     Route::post('/biodata-santri', [BiodataSantriController::class, 'store'])->name('biodata-santri.store');
     Route::get('/pembayaran', [PembayaranSantriController::class, 'index'])->name('pembayaran.index');
+    Route::post('/pembayaran', [PembayaranSantriController::class, 'store'])->name('pembayaran.store');
 });
 
 require __DIR__.'/auth.php';

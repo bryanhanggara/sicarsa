@@ -75,6 +75,16 @@ class BiodataSantriController extends Controller
 
         $data['user_id'] = $user->id;
 
+        // Set status to unverified if creating new biodata (not updating)
+        if (!$user->biodataSantri) {
+            $data['status'] = 'unverified';
+        } else {
+            // Preserve status when updating (don't reset to unverified)
+            if (!isset($data['status'])) {
+                $data['status'] = $user->biodataSantri->status ?? 'unverified';
+            }
+        }
+
         // Preserve existing file paths if no new file is uploaded
         if ($user->biodataSantri) {
             if (!isset($data['foto']) && $user->biodataSantri->foto) {

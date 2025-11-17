@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BiodataSantri;
+use App\Models\Pendaftaran;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class PembayaranSantriController extends Controller
@@ -11,6 +17,11 @@ class PembayaranSantriController extends Controller
      */
     public function index(): View
     {
+        $user = Auth::user();
+        $biodata = $user->biodataSantri;
+        
+        // Check if biodata exists and is verified
+        $isVerified = $biodata && $biodata->status === 'verified';
         $biaya = [
             [
                 'jenis' => 'Pendaftaran',
@@ -131,9 +142,62 @@ class PembayaranSantriController extends Controller
             'Bagi siswa yang berdomisili di luar desa Putak, diwajibkan mukim/menetap di pondok kecuali yang masih MI.',
         ];
 
-        $statusMessage = 'Admin belum melakukan konfirmasi data diri anda, mohon tunggu sejenak untuk melakukan pembayaran';
+        if (!$biodata) {
+            $statusMessage = 'Silakan lengkapi biodata terlebih dahulu sebelum melakukan pembayaran.';
+        } elseif (!$isVerified) {
+            $statusMessage = 'Admin belum melakukan konfirmasi data diri anda, mohon tunggu sejenak untuk melakukan pembayaran.';
+        } else {
+            $statusMessage = null; // No message if verified
+        }
 
-        return view('pembayaran.index', compact('biaya', 'totalBiaya', 'catatan', 'statusMessage'));
+        // Get pendaftaran data if exists
+        $pendaftaran = $biodata ? $biodata->pendaftaran : null;
+
+        return view('pembayaran.index', compact('biaya', 'totalBiaya', 'catatan', 'statusMessage', 'isVerified', 'biodata', 'pendaftaran'));
+    }
+
+    /**
+     * Store payment proof.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'bukti_pembayaran' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+        ]);
+
+        $user = Auth::user();
+        $biodata = $user->biodataSantri;
+
+        if (!$biodata || $biodata->status !== 'verified') {
+            return redirect()->route('pembayaran.index')
+                ->with('error', 'Anda tidak memiliki akses untuk melakukan pembayaran.');
+        }
+
+        // Get or create pendaftaran
+        $pendaftaran = $biodata->pendaftaran;
+
+        // Delete old file if exists
+        if ($pendaftaran && $pendaftaran->bukti_pembayaran) {
+            Storage::disk('public')->delete($pendaftaran->bukti_pembayaran);
+        }
+
+        // Store new file
+        $buktiPembayaran = $request->file('bukti_pembayaran')->store('pembayaran/bukti', 'public');
+
+        // Update or create pendaftaran
+        if ($pendaftaran) {
+            $pendaftaran->update([
+                'bukti_pembayaran' => $buktiPembayaran,
+            ]);
+        } else {
+            Pendaftaran::create([
+                'biodata_santri_id' => $biodata->id,
+                'bukti_pembayaran' => $buktiPembayaran,
+            ]);
+        }
+
+        return redirect()->route('pembayaran.index')
+            ->with('success', 'Bukti pembayaran berhasil diunggah.');
     }
 }
 
