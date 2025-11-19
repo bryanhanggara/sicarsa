@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
@@ -29,7 +30,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nik' => ['required', 'string'],
+            'role' => ['required', Rule::in(['santri', 'admin'])],
+            'nik' => ['nullable', 'required_if:role,santri', 'string'],
+            'email' => ['nullable', 'required_if:role,admin', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -43,17 +46,26 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $nik = $this->input('nik');
+        $role = $this->input('role', 'santri');
+        $field = $this->identifierField();
+        $identifier = $this->identifierValue();
         $password = $this->input('password');
 
-        // Find user by NIK
-        $user = User::where('nik', $nik)->first();
+        $userQuery = User::query()->where($field, $identifier);
+
+        if ($role === 'admin') {
+            $userQuery->where('role', 'admin');
+        } else {
+            $userQuery->where('role', 'santri');
+        }
+
+        $user = $userQuery->first();
 
         if (!$user || !Hash::check($password, $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'nik' => trans('auth.failed'),
+                $field => trans('auth.failed'),
             ]);
         }
 
@@ -79,7 +91,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'nik' => trans('auth.throttle', [
+            $this->identifierField() => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -91,6 +103,16 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('nik')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->identifierValue()).'|'.$this->ip());
+    }
+
+    private function identifierField(): string
+    {
+        return $this->input('role', 'santri') === 'admin' ? 'email' : 'nik';
+    }
+
+    private function identifierValue(): string
+    {
+        return (string) $this->input($this->identifierField(), '');
     }
 }

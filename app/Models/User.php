@@ -26,6 +26,7 @@ class User extends Authenticatable
         'tanggal_lahir',
         'jenjang_yang_dituju',
         'password',
+        'role',
     ];
 
     /**
@@ -55,5 +56,10 @@ class User extends Authenticatable
     public function biodataSantri(): HasOne
     {
         return $this->hasOne(BiodataSantri::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

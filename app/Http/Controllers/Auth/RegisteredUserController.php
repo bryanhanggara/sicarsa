@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'jenjang_yang_dituju' => $request->jenjang_yang_dituju,
             'password' => Hash::make($request->password),
+            'role' => 'santri',
         ]);
 
         event(new Registered($user));

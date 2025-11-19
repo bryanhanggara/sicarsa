@@ -28,7 +28,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('biodata-santri.index', absolute: false));
+        $redirectRoute = Auth::user()?->isAdmin()
+            ? route('admin.dashboard', absolute: false)
+            : route('biodata-santri.index', absolute: false);
+
+        return redirect()->intended($redirectRoute);
     }
 
     /**

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BiodataSantriController;
 use App\Http\Controllers\PembayaranSantriController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 
 // Route::get('/', function () {
@@ -21,5 +22,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/pembayaran', [PembayaranSantriController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [PembayaranSantriController::class, 'store'])->name('pembayaran.store');
 });
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+    });
 
 require __DIR__.'/auth.php';

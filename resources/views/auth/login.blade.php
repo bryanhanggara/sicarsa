@@ -19,10 +19,10 @@
     
     <!-- Role Selection Tabs -->
     <div class="role-tabs">
-        <div class="role-tab active" data-role="santri" onclick="switchRole('santri')">
+        <div class="role-tab {{ old('role', 'santri') === 'santri' ? 'active' : '' }}" data-role="santri" onclick="switchRole('santri')">
             Calon Santri
         </div>
-        <div class="role-tab" data-role="admin" onclick="switchRole('admin')">
+        <div class="role-tab {{ old('role') === 'admin' ? 'active' : '' }}" data-role="admin" onclick="switchRole('admin')">
             Admin Pesantren
         </div>
     </div>
@@ -30,14 +30,24 @@
     <!-- Login Form -->
     <form method="POST" action="{{ route('login') }}" id="loginForm">
         @csrf
-        <input type="hidden" name="role" id="roleInput" value="santri">
+        <input type="hidden" name="role" id="roleInput" value="{{ old('role', 'santri') }}">
         
-        <div class="mb-3">
+        <div class="mb-3 santri-field">
             <label for="nik" class="form-label">Nomor Induk Keluarga</label>
             <input type="text" class="form-control @error('nik') is-invalid @enderror" 
                    id="nik" name="nik" placeholder="NIK Pendaftar" 
-                   value="{{ old('nik') }}" required autofocus>
+                   value="{{ old('nik') }}">
             @error('nik')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3 admin-field d-none">
+            <label for="email" class="form-label">Email Admin</label>
+            <input type="email" class="form-control @error('email') is-invalid @enderror"
+                   id="email" name="email" placeholder="Email Admin"
+                   value="{{ old('email') }}">
+            @error('email')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
@@ -71,14 +81,30 @@
 @section('scripts')
 <script>
     function switchRole(role) {
-        // Update active tab
-        document.querySelectorAll('.role-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
+        document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelector(`[data-role="${role}"]`).classList.add('active');
-        
-        // Update hidden input
+
         document.getElementById('roleInput').value = role;
+
+        const santriField = document.querySelector('.santri-field');
+        const adminField = document.querySelector('.admin-field');
+
+        if (role === 'admin') {
+            santriField.classList.add('d-none');
+            adminField.classList.remove('d-none');
+            document.getElementById('email').setAttribute('required', 'required');
+            document.getElementById('nik').removeAttribute('required');
+        } else {
+            adminField.classList.add('d-none');
+            santriField.classList.remove('d-none');
+            document.getElementById('nik').setAttribute('required', 'required');
+            document.getElementById('email').removeAttribute('required');
+        }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const initialRole = document.getElementById('roleInput').value || 'santri';
+        switchRole(initialRole);
+    });
 </script>
 @endsection
