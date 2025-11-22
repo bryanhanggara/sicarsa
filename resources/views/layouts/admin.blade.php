@@ -68,6 +68,47 @@
             transition: all 0.3s ease;
         }
 
+        /* Navigation menu */
+        .nav-menu-item {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nav-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .nav-menu-item.active .nav-submenu {
+            max-height: 500px;
+        }
+
+        .nav-submenu-item {
+            padding-left: 52px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .nav-submenu-item::before {
+            content: '•';
+            position: absolute;
+            left: 36px;
+            color: #129990;
+            font-weight: bold;
+        }
+
+        .nav-submenu-item a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-submenu-item a:hover {
+            color: #129990;
+        }
+
         /* Sidebar Mobile */
         @media (max-width: 768px) {
             .sidebar {
@@ -102,38 +143,92 @@
     <aside class="sidebar p-4">
         <!-- Logo -->
         <div class="d-flex align-items-center mb-4">
-            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                <span class="text-white fw-bold small">PP</span>
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; border: 2px solid #129990; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+                <i class="fas fa-mosque text-dark" style="font-size: 20px;"></i>
             </div>
             <div class="ms-3">
-                <h6 class="mb-0 fw-bold text-dark">Pondok Pesantren</h6>
-                <h6 class="mb-0 fw-bold text-dark">Al-Falah Putak</h6>
+                <h6 class="mb-0 fw-bold" style="color: #0d7377;">Pondok Pesantren Al-Falah Putak</h6>
             </div>
         </div>
 
         <!-- Navigation -->
         <nav class="d-flex flex-column gap-2">
-            <a href="{{ route('biodata-santri.index') }}" 
-               class="d-flex align-items-center px-3 py-2 rounded text-decoration-none transition {{ request()->routeIs('biodata-santri.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark hover-bg-light' }}">
-                <i class="fas fa-file-alt me-3" style="width: 20px;"></i>
-                <span class="fw-medium">Biodata Calon Santri</span>
+            <!-- Dashboard -->
+            <a href="{{ route('admin.dashboard') }}" 
+               class="d-flex align-items-center px-3 py-2 rounded text-decoration-none transition {{ request()->routeIs('admin.dashboard') ? 'bg-success bg-opacity-10 text-success' : 'text-dark hover-bg-light' }}">
+                <i class="fas fa-th me-3" style="width: 20px; color: #129990;"></i>
+                <span class="fw-medium">Dashboard</span>
             </a>
             
-            <a href="{{ route('pembayaran.index') }}" 
-               class="d-flex align-items-center px-3 py-2 rounded text-decoration-none transition {{ request()->routeIs('pembayaran.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark hover-bg-light' }}">
-                <i class="fas fa-credit-card me-3" style="width: 20px;"></i>
-                <span class="fw-medium">Pembayaran</span>
+            <!-- Verifikasi Data Calon Santri -->
+            <div class="nav-menu-item {{ request()->routeIs('admin.verifikasi.*') ? 'active' : '' }}">
+                <div class="d-flex align-items-center px-3 py-2 rounded text-decoration-none {{ request()->routeIs('admin.verifikasi.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark' }} hover-bg-light nav-menu-toggle">
+                    <i class="fas fa-file me-3" style="width: 20px; color: #129990;"></i>
+                    <span class="fw-medium">Verifikasi Data Calon Santri</span>
+                </div>
+                <div class="nav-submenu">
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.verifikasi.index', ['jenjang' => 'mi']) }}" class="{{ request()->routeIs('admin.verifikasi.*') && request()->query('jenjang', 'mi') === 'mi' ? 'text-success fw-semibold' : '' }}">Madrasah Ibtidaiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.verifikasi.index', ['jenjang' => 'mts']) }}" class="{{ request()->routeIs('admin.verifikasi.*') && request()->query('jenjang', 'mi') === 'mts' ? 'text-success fw-semibold' : '' }}">Madrasah Tsanawiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.verifikasi.index', ['jenjang' => 'ma']) }}" class="{{ request()->routeIs('admin.verifikasi.*') && request()->query('jenjang', 'mi') === 'ma' ? 'text-success fw-semibold' : '' }}">Madrasah Aliyah</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Pendaftaran -->
+            <div class="nav-menu-item {{ request()->routeIs('admin.pendaftaran.*') ? 'active' : '' }}">
+                <div class="d-flex align-items-center px-3 py-2 rounded text-decoration-none {{ request()->routeIs('admin.pendaftaran.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark' }} hover-bg-light nav-menu-toggle">
+                    <i class="fas fa-file-edit me-3" style="width: 20px; color: #129990;"></i>
+                    <span class="fw-medium">Data Pendaftaran</span>
+                </div>
+                <div class="nav-submenu">
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.pendaftaran.index', ['jenjang' => 'mi']) }}" class="{{ request()->query('jenjang') == 'mi' ? 'text-success fw-semibold' : '' }}">Madrasah Ibtidaiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.pendaftaran.index', ['jenjang' => 'mts']) }}" class="{{ request()->query('jenjang') == 'mts' ? 'text-success fw-semibold' : '' }}">Madrasah Tsanawiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.pendaftaran.index', ['jenjang' => 'ma']) }}" class="{{ request()->query('jenjang') == 'ma' ? 'text-success fw-semibold' : '' }}">Madrasah Aliyah</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Riwayat Informasi Kelulusan -->
+            <div class="nav-menu-item {{ request()->routeIs('admin.kelulusan.*') ? 'active' : '' }}">
+                <div class="d-flex align-items-center px-3 py-2 rounded text-decoration-none {{ request()->routeIs('admin.kelulusan.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark' }} hover-bg-light nav-menu-toggle">
+                    <i class="fas fa-history me-3" style="width: 20px; color: #129990;"></i>
+                    <span class="fw-medium">Riwayat Informasi Kelulusan</span>
+                </div>
+                <div class="nav-submenu">
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.kelulusan.index', ['jenjang' => 'mi']) }}" class="{{ request()->routeIs('admin.kelulusan.*') && request()->query('jenjang', 'mi') === 'mi' ? 'text-success fw-semibold' : '' }}">Madrasah Ibtidaiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.kelulusan.index', ['jenjang' => 'mts']) }}" class="{{ request()->routeIs('admin.kelulusan.*') && request()->query('jenjang', 'mi') === 'mts' ? 'text-success fw-semibold' : '' }}">Madrasah Tsanawiyyah</a>
+                    </div>
+                    <div class="nav-submenu-item">
+                        <a href="{{ route('admin.kelulusan.index', ['jenjang' => 'ma']) }}" class="{{ request()->routeIs('admin.kelulusan.*') && request()->query('jenjang', 'mi') === 'ma' ? 'text-success fw-semibold' : '' }}">Madrasah Aliyah</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kelola Berita -->
+            <a href="#" 
+               class="d-flex align-items-center px-3 py-2 rounded text-decoration-none transition text-dark hover-bg-light">
+                <i class="fas fa-newspaper me-3" style="width: 20px; color: #129990;"></i>
+                <span class="fw-medium">Kelola Berita</span>
             </a>
             
-            <a href="#" class="d-flex align-items-center px-3 py-2 rounded text-decoration-none text-dark hover-bg-light">
-                <i class="fas fa-graduation-cap me-3" style="width: 20px;"></i>
-                <span class="fw-medium">Informasi Kelulusan</span>
-            </a>
-            
+            <!-- Logout -->
             <form method="POST" action="{{ route('logout') }}" class="pt-3">
                 @csrf
                 <button type="submit" class="d-flex align-items-center px-3 py-2 rounded border-0 bg-transparent text-dark w-100 text-start hover-bg-light">
-                    <i class="fas fa-lock me-3" style="width: 20px;"></i>
+                    <i class="fas fa-unlock me-3" style="width: 20px; color: #129990;"></i>
                     <span class="fw-medium">Logout</span>
                 </button>
             </form>
@@ -154,6 +249,31 @@
             const toggleBtn = document.getElementById('menu-toggle');
             toggleBtn?.addEventListener('click', () => {
                 sidebar.classList.toggle('active');
+            });
+
+            // Menu toggle functionality
+            const menuItems = document.querySelectorAll('.nav-menu-item');
+            menuItems.forEach(item => {
+                // Auto-open menu if it has active class (from PHP route check)
+                if (item.classList.contains('active')) {
+                    item.classList.add('active');
+                }
+
+                const toggle = item.querySelector('.nav-menu-toggle');
+                toggle?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all other menus
+                    menuItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current menu
+                    item.classList.toggle('active', !isActive);
+                });
             });
         });
     </script>

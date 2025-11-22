@@ -5,6 +5,10 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BiodataSantriController;
 use App\Http\Controllers\PembayaranSantriController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminPendaftaranController;
+use App\Http\Controllers\Admin\AdminVerifikasiController;
+use App\Http\Controllers\Admin\AdminSantriDetailController;
+use App\Http\Controllers\Admin\AdminKelulusanController;
 
 
 // Route::get('/', function () {
@@ -28,6 +32,14 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
+        Route::get('/verifikasi', [AdminVerifikasiController::class, 'index'])->name('verifikasi.index');
+        Route::post('/verifikasi/approve', [AdminVerifikasiController::class, 'approve'])->name('verifikasi.approve');
+        Route::get('/pendaftaran', [AdminPendaftaranController::class, 'index'])->name('pendaftaran.index');
+        Route::get('/pendaftaran/admins', [AdminPendaftaranController::class, 'getAdmins'])->name('pendaftaran.admins');
+        Route::post('/pendaftaran/process', [AdminPendaftaranController::class, 'processPenerimaan'])->name('pendaftaran.process');
+        Route::get('/kelulusan', [AdminKelulusanController::class, 'index'])->name('kelulusan.index');
+        Route::get('/kelulusan/{riwayatPenerimaan}', [AdminKelulusanController::class, 'show'])->name('kelulusan.show');
+        Route::get('/santri/{biodataSantri}', [AdminSantriDetailController::class, 'show'])->name('santri.show');
     });
 
 require __DIR__.'/auth.php';

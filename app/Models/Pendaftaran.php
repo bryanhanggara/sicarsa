@@ -10,6 +10,7 @@ class Pendaftaran extends Model
     protected $fillable = [
         'biodata_santri_id',
         'bukti_pembayaran',
+        'status',
     ];
 
     public function biodataSantri(): BelongsTo

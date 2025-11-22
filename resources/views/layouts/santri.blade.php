@@ -102,8 +102,8 @@
     <aside class="sidebar p-4">
         <!-- Logo -->
         <div class="d-flex align-items-center mb-4">
-            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                <span class="text-white fw-bold small">PP</span>
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; border: 2px solid #129990; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+                <i class="fas fa-mosque text-dark" style="font-size: 20px;"></i>
             </div>
             <div class="ms-3">
                 <h6 class="mb-0 fw-bold text-dark">Pondok Pesantren</h6>
