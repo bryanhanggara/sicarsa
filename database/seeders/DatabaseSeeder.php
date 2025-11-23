@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->call([
-            BiodataSantriSeeder::class,
-        ]);
+        // $this->call([
+        //     BiodataSantriSeeder::class,
+        // ]);
     }
 }

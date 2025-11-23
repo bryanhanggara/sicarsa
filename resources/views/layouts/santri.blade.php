@@ -125,7 +125,7 @@
                 <span class="fw-medium">Pembayaran</span>
             </a>
             
-            <a href="#" class="d-flex align-items-center px-3 py-2 rounded text-decoration-none text-dark hover-bg-light">
+            <a href="{{ route('santri.kelulusan') }}" class="d-flex align-items-center px-3 py-2 rounded text-decoration-none text-dark hover-bg-light">
                 <i class="fas fa-graduation-cap me-3" style="width: 20px;"></i>
                 <span class="fw-medium">Informasi Kelulusan</span>
             </a>

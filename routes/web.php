@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BiodataSantriController;
+use App\Http\Controllers\InformasiKelulusanSantri;
 use App\Http\Controllers\PembayaranSantriController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminPendaftaranController;
-use App\Http\Controllers\Admin\AdminVerifikasiController;
-use App\Http\Controllers\Admin\AdminSantriDetailController;
 use App\Http\Controllers\Admin\AdminKelulusanController;
+use App\Http\Controllers\Admin\AdminVerifikasiController;
+use App\Http\Controllers\Admin\AdminPendaftaranController;
+use App\Http\Controllers\Admin\AdminSantriDetailController;
 
 
 // Route::get('/', function () {
@@ -25,6 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/biodata-santri', [BiodataSantriController::class, 'store'])->name('biodata-santri.store');
     Route::get('/pembayaran', [PembayaranSantriController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [PembayaranSantriController::class, 'store'])->name('pembayaran.store');
+
+    Route::get('/informasi-kelulusan', [InformasiKelulusanSantri::class, 'index'])
+    ->name('santri.kelulusan');
 });
 
 Route::middleware(['auth', 'admin'])
