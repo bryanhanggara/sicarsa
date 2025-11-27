@@ -40,6 +40,18 @@
             @error('nik')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
+
+            <label for="jenjang" class="form-label mt-3">Jenjang Yang Dituju</label>
+            <select id="jenjang" name="jenjang_yang_dituju" 
+                    class="form-select @error('jenjang_yang_dituju') is-invalid @enderror">
+                <option value="">-- Pilih Jenjang --</option>
+                <option value="MI" {{ old('jenjang_yang_dituju') == 'MI' ? 'selected' : '' }}>MI</option>
+                <option value="MTs" {{ old('jenjang_yang_dituju') == 'MTs' ? 'selected' : '' }}>MTs</option>
+                <option value="MA" {{ old('jenjang_yang_dituju') == 'MA' ? 'selected' : '' }}>MA</option>
+            </select>
+            @error('jenjang_yang_dituju')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="mb-3 admin-field d-none">
@@ -51,6 +63,7 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
+        
         
         <div class="mb-4">
             <label for="password" class="form-label">Password</label>
@@ -94,11 +107,13 @@
             adminField.classList.remove('d-none');
             document.getElementById('email').setAttribute('required', 'required');
             document.getElementById('nik').removeAttribute('required');
+            document.getElementById('jenjang').removeAttribute('required');
         } else {
             adminField.classList.add('d-none');
             santriField.classList.remove('d-none');
             document.getElementById('nik').setAttribute('required', 'required');
             document.getElementById('email').removeAttribute('required');
+            document.getElementById('jenjang').setAttribute('required', 'required');
         }
     }
 

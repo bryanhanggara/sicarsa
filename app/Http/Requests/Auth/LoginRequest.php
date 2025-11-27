@@ -33,6 +33,7 @@ class LoginRequest extends FormRequest
             'role' => ['required', Rule::in(['santri', 'admin'])],
             'nik' => ['nullable', 'required_if:role,santri', 'string'],
             'email' => ['nullable', 'required_if:role,admin', 'string', 'email'],
+            'jenjang_yang_dituju' => ['nullable', 'required_if:role,santri', Rule::in(['MA', 'MTs', 'MI'])],
             'password' => ['required', 'string'],
         ];
     }
@@ -69,7 +70,18 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Login the user
+         // Pengecekan jenjang
+        if ($role === 'santri') {
+            $inputJenjang = $this->input('jenjang_yang_dituju');
+
+            if ($user->jenjang_yang_dituju !== $inputJenjang) {
+                throw ValidationException::withMessages([
+                    'jenjang_yang_dituju' => 'Jenjang yang Anda pilih tidak sesuai dengan data pendaftaran.',
+                ]);
+            }
+        }
+
+        // Login
         Auth::login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
