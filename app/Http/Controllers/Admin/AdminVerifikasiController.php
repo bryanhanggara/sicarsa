@@ -28,8 +28,7 @@ class AdminVerifikasiController extends Controller
 
         $search = $request->query('search', '');
 
-        $santri = BiodataSantri::with('pendaftaran')
-            ->where('status', 'unverified')
+        $santri = BiodataSantri::where('status', 'unverified')
             ->where(function ($query) use ($jenjang) {
                 $query->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . Str::lower($jenjang) . '%'])
                     ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);

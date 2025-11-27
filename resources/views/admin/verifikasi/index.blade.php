@@ -63,7 +63,7 @@
                         <tbody>
                             @forelse($santri as $biodata)
                                 @php
-                                    $idPendaftaran = $biodata->pendaftaran ? str_pad($biodata->pendaftaran->id, 8, '0', STR_PAD_LEFT) : '-';
+                                    $idPendaftaran = str_pad($biodata->id, 8, '0', STR_PAD_LEFT);
                                 @endphp
                                 <tr>
                                     <td class="px-4 py-3 border-0">{{ $idPendaftaran }}</td>
@@ -174,7 +174,7 @@
                                                        value="{{ $biodata->id }}"
                                                        checked>
                                             </td>
-                                            <td>{{ $biodata->pendaftaran ? str_pad($biodata->pendaftaran->id, 8, '0', STR_PAD_LEFT) : '-' }}</td>
+                                            <td>{{ str_pad($biodata->id, 8, '0', STR_PAD_LEFT) }}</td>
                                             <td>{{ $biodata->nama_lengkap }}</td>
                                             <td>{{ $biodata->nik_calon_santri }}</td>
                                             <td>{{ $biodata->tempat_lahir }}</td>

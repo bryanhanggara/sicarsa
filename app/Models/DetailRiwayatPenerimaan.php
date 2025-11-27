@@ -14,7 +14,7 @@ class DetailRiwayatPenerimaan extends Model
 
     protected $fillable = [
         'riwayat_penerimaan_id',
-        'id_pendaftaran',
+        'biodata_santri_id',
     ];
 
     public function riwayatPenerimaan(): BelongsTo
@@ -22,8 +22,8 @@ class DetailRiwayatPenerimaan extends Model
         return $this->belongsTo(RiwayatPenerimaan::class, 'riwayat_penerimaan_id');
     }
 
-    public function pendaftaran(): BelongsTo
+    public function biodataSantri(): BelongsTo
     {
-        return $this->belongsTo(Pendaftaran::class, 'id_pendaftaran');
+        return $this->belongsTo(BiodataSantri::class, 'biodata_santri_id');
     }
 }

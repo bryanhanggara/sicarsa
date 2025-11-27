@@ -59,7 +59,7 @@
                     <div class="card-body">
                         <p class="text-uppercase text-muted small mb-1">ID Pendaftaran</p>
                         <h5 class="fw-bold text-dark mb-0">
-                            {{ $biodata->pendaftaran ? str_pad($biodata->pendaftaran->id, 8, '0', STR_PAD_LEFT) : 'Belum tersedia' }}
+                            {{ str_pad($biodata->id, 8, '0', STR_PAD_LEFT) }}
                         </h5>
                         <p class="text-muted small mb-0">Tanggal Daftar: {{ optional($biodata->created_at)->format('d M Y') ?? '-' }}</p>
                     </div>

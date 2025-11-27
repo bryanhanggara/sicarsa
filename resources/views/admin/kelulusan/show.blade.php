@@ -112,9 +112,8 @@
                         <tbody>
                             @forelse($details as $detail)
                                 @php
-                                    $pendaftaran = $detail->pendaftaran;
-                                    $biodata = $pendaftaran->biodataSantri ?? null;
-                                    $idPendaftaran = str_pad($pendaftaran->id, 8, '0', STR_PAD_LEFT);
+                                    $biodata = $detail->biodataSantri ?? null;
+                                    $idPendaftaran = $biodata ? str_pad($biodata->id, 8, '0', STR_PAD_LEFT) : '-';
                                 @endphp
                                 @if($biodata)
                                     <tr>
@@ -129,8 +128,8 @@
                                             </a>
                                         </td>
                                         <td class="px-4 py-3 border-0 text-center">
-                                            @if($pendaftaran->bukti_pembayaran)
-                                                <a href="{{ Storage::url($pendaftaran->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Bukti Pembayaran">
+                                            @if($biodata->bukti_pembayaran)
+                                                <a href="{{ Storage::url($biodata->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Bukti Pembayaran">
                                                     <i class="fas fa-eye text-success" style="font-size: 1.1rem;"></i>
                                                 </a>
                                             @else

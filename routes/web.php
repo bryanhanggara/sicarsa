@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminKelulusanController;
 use App\Http\Controllers\Admin\AdminVerifikasiController;
 use App\Http\Controllers\Admin\AdminPendaftaranController;
 use App\Http\Controllers\Admin\AdminSantriDetailController;
+use App\Http\Controllers\Admin\PeriodeController;
 
 
 // Route::get('/', function () {
@@ -44,6 +45,9 @@ Route::middleware(['auth', 'admin'])
         Route::get('/kelulusan', [AdminKelulusanController::class, 'index'])->name('kelulusan.index');
         Route::get('/kelulusan/{riwayatPenerimaan}', [AdminKelulusanController::class, 'show'])->name('kelulusan.show');
         Route::get('/santri/{biodataSantri}', [AdminSantriDetailController::class, 'show'])->name('santri.show');
+        
+        // Periode CRUD Routes
+        Route::resource('periode', PeriodeController::class);
     });
 
 require __DIR__.'/auth.php';

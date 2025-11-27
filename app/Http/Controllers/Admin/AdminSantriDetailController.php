@@ -13,7 +13,7 @@ class AdminSantriDetailController extends Controller
      */
     public function show(BiodataSantri $biodataSantri): View
     {
-        $biodataSantri->load('pendaftaran', 'user');
+        $biodataSantri->load('user');
 
         return view('admin.santri.show', [
             'biodata' => $biodataSantri,

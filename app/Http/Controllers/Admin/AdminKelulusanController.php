@@ -29,10 +29,10 @@ class AdminKelulusanController extends Controller
 
         $jenjangLabel = $jenjangLabels[$jenjang];
 
-        // Query riwayat penerimaan yang memiliki detail dengan pendaftaran sesuai jenjang
-        $query = RiwayatPenerimaan::with(['admin', 'details.pendaftaran.biodataSantri'])
+        // Query riwayat penerimaan yang memiliki detail dengan biodata sesuai jenjang
+        $query = RiwayatPenerimaan::with(['admin', 'details.biodataSantri'])
             ->whereHas('details', function ($detailQ) use ($jenjang) {
-                $detailQ->whereHas('pendaftaran.biodataSantri', function ($q) use ($jenjang) {
+                $detailQ->whereHas('biodataSantri', function ($q) use ($jenjang) {
                     $q->where(function ($subQ) use ($jenjang) {
                         $subQ->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . Str::lower($jenjang) . '%'])
                              ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);
@@ -84,7 +84,7 @@ class AdminKelulusanController extends Controller
     {
         $riwayatPenerimaan->load([
             'admin',
-            'details.pendaftaran.biodataSantri'
+            'details.biodataSantri'
         ]);
 
         // Get jenjang from first detail's biodata (for breadcrumb/filter)
@@ -96,7 +96,7 @@ class AdminKelulusanController extends Controller
         ];
 
         if ($riwayatPenerimaan->details->isNotEmpty()) {
-            $firstBiodata = $riwayatPenerimaan->details->first()->pendaftaran->biodataSantri ?? null;
+            $firstBiodata = $riwayatPenerimaan->details->first()->biodataSantri ?? null;
             if ($firstBiodata && $firstBiodata->tujuan_jenjang_pendidikan) {
                 $tujuan = Str::lower($firstBiodata->tujuan_jenjang_pendidikan);
                 if (Str::contains($tujuan, 'mi') || Str::contains($tujuan, 'ibtidaiyyah')) {
@@ -117,7 +117,7 @@ class AdminKelulusanController extends Controller
 
         if ($search) {
             $details = $details->filter(function ($detail) use ($search) {
-                $biodata = $detail->pendaftaran->biodataSantri ?? null;
+                $biodata = $detail->biodataSantri ?? null;
                 if (!$biodata) return false;
                 
                 return Str::contains(Str::lower($biodata->nama_lengkap ?? ''), Str::lower($search))

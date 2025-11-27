@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\BiodataSantri;
-use App\Models\Pendaftaran;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -150,10 +149,7 @@ class PembayaranSantriController extends Controller
             $statusMessage = null; // No message if verified
         }
 
-        // Get pendaftaran data if exists
-        $pendaftaran = $biodata ? $biodata->pendaftaran : null;
-
-        return view('pembayaran.index', compact('biaya', 'totalBiaya', 'catatan', 'statusMessage', 'isVerified', 'biodata', 'pendaftaran'));
+        return view('pembayaran.index', compact('biaya', 'totalBiaya', 'catatan', 'statusMessage', 'isVerified', 'biodata'));
     }
 
     /**
@@ -173,28 +169,18 @@ class PembayaranSantriController extends Controller
                 ->with('error', 'Anda tidak memiliki akses untuk melakukan pembayaran.');
         }
 
-        // Get or create pendaftaran
-        $pendaftaran = $biodata->pendaftaran;
-
         // Delete old file if exists
-        if ($pendaftaran && $pendaftaran->bukti_pembayaran) {
-            Storage::disk('public')->delete($pendaftaran->bukti_pembayaran);
+        if ($biodata->bukti_pembayaran) {
+            Storage::disk('public')->delete($biodata->bukti_pembayaran);
         }
 
         // Store new file
         $buktiPembayaran = $request->file('bukti_pembayaran')->store('pembayaran/bukti', 'public');
 
-        // Update or create pendaftaran
-        if ($pendaftaran) {
-            $pendaftaran->update([
-                'bukti_pembayaran' => $buktiPembayaran,
-            ]);
-        } else {
-            Pendaftaran::create([
-                'biodata_santri_id' => $biodata->id,
-                'bukti_pembayaran' => $buktiPembayaran,
-            ]);
-        }
+        // Update biodata
+        $biodata->update([
+            'bukti_pembayaran' => $buktiPembayaran,
+        ]);
 
         return redirect()->route('pembayaran.index')
             ->with('success', 'Bukti pembayaran berhasil diunggah.');

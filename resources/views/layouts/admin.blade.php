@@ -198,6 +198,12 @@
                 </div>
             </div>
             
+            <!-- Kelola Periode -->
+            <a href="{{ route('admin.periode.index') }}" class="d-flex align-items-center px-3 py-2 rounded text-decoration-none {{ request()->routeIs('admin.periode.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark' }} hover-bg-light">
+                <i class="fas fa-calendar-alt me-3" style="width: 20px; color: #129990;"></i>
+                <span class="fw-medium">Kelola Periode</span>
+            </a>
+            
             <!-- Riwayat Informasi Kelulusan -->
             <div class="nav-menu-item {{ request()->routeIs('admin.kelulusan.*') ? 'active' : '' }}">
                 <div class="d-flex align-items-center px-3 py-2 rounded text-decoration-none {{ request()->routeIs('admin.kelulusan.*') ? 'bg-success bg-opacity-10 text-success' : 'text-dark' }} hover-bg-light nav-menu-toggle">

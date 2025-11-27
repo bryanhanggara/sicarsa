@@ -15,6 +15,7 @@ class RiwayatPenerimaan extends Model
 
     protected $fillable = [
         'admin_id',
+        'periode_id',
         'total_diterima',
         'total_ditolak',
     ];
@@ -22,6 +23,11 @@ class RiwayatPenerimaan extends Model
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function periode(): BelongsTo
+    {
+        return $this->belongsTo(Periode::class);
     }
 
     public function details(): HasMany

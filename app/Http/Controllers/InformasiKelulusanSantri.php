@@ -9,15 +9,13 @@ class InformasiKelulusanSantri extends Controller
 {
     public function index()
     {
-        $biodata = BiodataSantri::where('user_id', auth()->id())
-            ->with('pendaftaran')
-            ->first();
+        $biodata = BiodataSantri::where('user_id', auth()->id())->first();
 
-        // Jika belum pernah daftar
-        if (!$biodata || !$biodata->pendaftaran) {
+        // Jika belum pernah daftar atau belum ada status penerimaan
+        if (!$biodata || !$biodata->status_penerimaan) {
             $status = 'belum';
         } else {
-            $status = $biodata->pendaftaran->status; // diterima, pending, ditolak, dll
+            $status = $biodata->status_penerimaan; // diterima, ditolak
         }
 
         return view('santri.kelulusan', compact('biodata', 'status'));

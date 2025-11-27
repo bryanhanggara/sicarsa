@@ -13,6 +13,21 @@
             <h1 class="h2 fw-bold mb-2" style="color: #0d7377;">Data Pendaftaran Calon Santri Pesantren Al-Falah Putak</h1>
         </div>
 
+        <!-- Alert Messages -->
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <!-- Toolbar -->
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-body py-3">
@@ -59,10 +74,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($pendaftarans as $pendaftaran)
+                            @forelse($pendaftarans as $biodata)
                                 @php
-                                    $biodata = $pendaftaran->biodataSantri;
-                                    $idPendaftaran = str_pad($pendaftaran->id, 8, '0', STR_PAD_LEFT);
+                                    $idPendaftaran = str_pad($biodata->id, 8, '0', STR_PAD_LEFT);
                                 @endphp
                                 <tr>
                                     <td class="px-4 py-3 border-0">{{ $idPendaftaran }}</td>
@@ -76,8 +90,8 @@
                                         </a>
                                     </td>
                                     <td class="px-4 py-3 border-0 text-center">
-                                        @if($pendaftaran->bukti_pembayaran)
-                                            <a href="{{ Storage::url($pendaftaran->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Pembayaran">
+                                        @if($biodata->bukti_pembayaran)
+                                            <a href="{{ Storage::url($biodata->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Pembayaran">
                                                 <i class="fas fa-eye text-success" style="font-size: 1.1rem;"></i>
                                             </a>
                                         @else
@@ -152,21 +166,37 @@
             <div class="modal-header border-0 pb-0 position-relative">
                 <button type="button" class="btn-close position-absolute top-0 end-0" data-bs-dismiss="modal" aria-label="Close" style="font-size: 1.5rem; opacity: 0.5;"></button>
                 <div class="w-100">
-                    <h5 class="modal-title fw-bold text-dark mb-2" id="penerimaanModalLabel">Pilih Nama Admin Yang Bertugas</h5>
-                    <div class="mb-3">
-                        <select name="admin_id" id="adminSelect" class="form-select" style="max-width: 300px; border-color: #129990;">
-                            <option value="">Pilih Nama Admin</option>
-                            @foreach($admins as $admin)
-                                <option value="{{ $admin->id }}">{{ $admin->name }}</option>
-                            @endforeach
-                        </select>
+                    <h5 class="modal-title fw-bold text-dark mb-3" id="penerimaanModalLabel">Pilih Admin dan Periode Penerimaan</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="adminSelect" class="form-label small text-muted mb-1">Nama Admin</label>
+                            <select name="admin_id" id="adminSelect" class="form-select" style="border-color: #129990;">
+                                <option value="">Pilih Nama Admin</option>
+                                @foreach($admins as $admin)
+                                    <option value="{{ $admin->id }}">{{ $admin->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="periodeSelect" class="form-label small text-muted mb-1">Periode Penerimaan</label>
+                            <select name="periode_id" id="periodeSelect" class="form-select" style="border-color: #129990;">
+                                <option value="">Pilih Periode</option>
+                                @foreach($periodes as $periode)
+                                    <option value="{{ $periode->id }}" data-kuota="{{ $periode->kuota_penerimaan }}">
+                                        {{ $periode->tahun_periode_penerimaan }} (Kuota: {{ $periode->kuota_penerimaan }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
+                    <div id="kuotaInfo" class="mt-2 small text-muted" style="display: none;"></div>
                 </div>
             </div>
             <div class="modal-body">
                 <form id="penerimaanForm" method="POST" action="{{ route('admin.pendaftaran.process') }}">
                     @csrf
                     <input type="hidden" name="admin_id" id="formAdminId">
+                    <input type="hidden" name="periode_id" id="formPeriodeId">
                     <input type="hidden" name="action" id="formAction">
                     
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -199,14 +229,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($pendaftarans as $pendaftaran)
+                                @forelse($pendaftarans as $biodata)
                                     @php
-                                        $biodata = $pendaftaran->biodataSantri;
-                                        $idPendaftaran = str_pad($pendaftaran->id, 8, '0', STR_PAD_LEFT);
+                                        $idPendaftaran = str_pad($biodata->id, 8, '0', STR_PAD_LEFT);
                                     @endphp
                                     <tr>
                                         <td class="px-4 py-3 border-0">
-                                            <input type="checkbox" name="pendaftaran_ids[]" value="{{ $pendaftaran->id }}" class="form-check-input pendaftaran-checkbox">
+                                            <input type="checkbox" name="pendaftaran_ids[]" value="{{ $biodata->id }}" class="form-check-input pendaftaran-checkbox">
                                         </td>
                                         <td class="px-4 py-3 border-0">{{ $idPendaftaran }}</td>
                                         <td class="px-4 py-3 border-0">{{ $biodata->nama_lengkap }}</td>
@@ -238,9 +267,7 @@
             </div>
             <div class="modal-footer border-0 pt-3">
                 <div class="d-flex justify-content-between w-100 align-items-center">
-                    <button type="button" class="btn btn-outline-secondary" id="btnTolak" disabled>
-                        Tolak Pendaftaran
-                    </button>
+                   
                     <button type="button" class="btn btn-success" id="btnKonfirmasi" disabled>
                         Konfirmasi Kelulusan
                     </button>
@@ -255,7 +282,10 @@
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('penerimaanModal');
         const adminSelect = document.getElementById('adminSelect');
+        const periodeSelect = document.getElementById('periodeSelect');
         const formAdminId = document.getElementById('formAdminId');
+        const formPeriodeId = document.getElementById('formPeriodeId');
+        const kuotaInfo = document.getElementById('kuotaInfo');
         const selectAll = document.getElementById('selectAll');
         const checkboxes = document.querySelectorAll('.pendaftaran-checkbox');
         const btnTolak = document.getElementById('btnTolak');
@@ -267,6 +297,23 @@
         adminSelect.addEventListener('change', function() {
             formAdminId.value = this.value;
             updateButtonStates();
+        });
+
+        // Update form periode_id and show kuota info when dropdown changes
+        periodeSelect.addEventListener('change', function() {
+            formPeriodeId.value = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            const kuota = selectedOption.getAttribute('data-kuota');
+            
+            if (this.value && kuota) {
+                kuotaInfo.style.display = 'block';
+                kuotaInfo.innerHTML = `<i class="fas fa-info-circle"></i> Kuota tersedia: <strong>${kuota}</strong> siswa`;
+            } else {
+                kuotaInfo.style.display = 'none';
+            }
+            
+            updateButtonStates();
+            updateKuotaWarning();
         });
 
         // Select all functionality
@@ -282,6 +329,7 @@
             cb.addEventListener('change', function() {
                 updateSelectAllState();
                 updateButtonStates();
+                updateKuotaWarning();
             });
         });
 
@@ -295,10 +343,32 @@
         function updateButtonStates() {
             const hasSelection = Array.from(checkboxes).some(cb => cb.checked);
             const hasAdmin = adminSelect.value !== '';
-            const enabled = hasSelection && hasAdmin;
+            const hasPeriode = periodeSelect.value !== '';
+            const enabled = hasSelection && hasAdmin && hasPeriode;
             
             btnTolak.disabled = !enabled;
             btnKonfirmasi.disabled = !enabled;
+        }
+
+        function updateKuotaWarning() {
+            const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const selectedOption = periodeSelect.options[periodeSelect.selectedIndex];
+            const kuota = selectedOption ? parseInt(selectedOption.getAttribute('data-kuota')) : 0;
+            
+            if (periodeSelect.value && selectedCount > 0) {
+                if (selectedCount > kuota) {
+                    kuotaInfo.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> <span class="text-danger">Jumlah yang dipilih (${selectedCount}) melebihi kuota (${kuota})!</span>`;
+                    kuotaInfo.style.display = 'block';
+                    btnKonfirmasi.disabled = true;
+                } else {
+                    const tersisa = kuota - selectedCount;
+                    kuotaInfo.innerHTML = `<i class="fas fa-info-circle"></i> Kuota tersedia: <strong>${kuota}</strong> | Dipilih: <strong>${selectedCount}</strong> | Tersisa: <strong>${tersisa}</strong>`;
+                    kuotaInfo.style.display = 'block';
+                    if (adminSelect.value) {
+                        btnKonfirmasi.disabled = false;
+                    }
+                }
+            }
         }
 
         // Tolak button
@@ -321,7 +391,21 @@
                 alert('Pilih minimal satu pendaftaran untuk diterima.');
                 return;
             }
-            if (confirm(`Apakah Anda yakin ingin menerima ${selected.length} pendaftaran yang dipilih?`)) {
+            
+            if (!periodeSelect.value) {
+                alert('Pilih periode penerimaan terlebih dahulu.');
+                return;
+            }
+            
+            const selectedOption = periodeSelect.options[periodeSelect.selectedIndex];
+            const kuota = parseInt(selectedOption.getAttribute('data-kuota'));
+            
+            if (selected.length > kuota) {
+                alert(`Jumlah yang dipilih (${selected.length}) melebihi kuota yang tersedia (${kuota}). Silakan kurangi jumlah pilihan.`);
+                return;
+            }
+            
+            if (confirm(`Apakah Anda yakin ingin menerima ${selected.length} pendaftaran yang dipilih untuk periode ${selectedOption.text}?`)) {
                 formAction.value = 'diterima';
                 form.submit();
             }
@@ -331,7 +415,10 @@
         modal.addEventListener('hidden.bs.modal', function() {
             form.reset();
             adminSelect.value = '';
+            periodeSelect.value = '';
             formAdminId.value = '';
+            formPeriodeId.value = '';
+            kuotaInfo.style.display = 'none';
             checkboxes.forEach(cb => cb.checked = false);
             selectAll.checked = false;
             selectAll.indeterminate = false;

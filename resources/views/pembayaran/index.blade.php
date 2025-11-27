@@ -133,8 +133,8 @@
                     @endif
 
                     <div id="bukti-preview" class="mb-3">
-                        @if($pendaftaran && $pendaftaran->bukti_pembayaran)
-                            <img src="{{ Storage::url($pendaftaran->bukti_pembayaran) }}" 
+                        @if($biodata && $biodata->bukti_pembayaran)
+                            <img src="{{ Storage::url($biodata->bukti_pembayaran) }}" 
                                  alt="Bukti Pembayaran" 
                                  class="img-fluid rounded" 
                                  style="max-height: 400px; width: auto;">

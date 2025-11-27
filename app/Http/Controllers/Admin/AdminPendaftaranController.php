@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pendaftaran;
+use App\Models\BiodataSantri;
 use App\Models\RiwayatPenerimaan;
 use App\Models\DetailRiwayatPenerimaan;
+use App\Models\Periode;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,26 +34,21 @@ class AdminPendaftaranController extends Controller
 
         $jenjangLabel = $jenjangLabels[$jenjang];
 
-        // Query pendaftaran with biodataSantri relationship and filter by jenjang
-        // Only show pendaftaran that haven't been processed (status is null)
-        $query = Pendaftaran::with('biodataSantri')
-            ->whereNull('status')
-            ->whereHas('biodataSantri', function ($q) use ($jenjang) {
-                $q->where(function ($subQ) use ($jenjang) {
-                    $subQ->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $jenjang . '%'])
-                         ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);
-                });
+        // Query biodata santri and filter by jenjang
+        // Only show biodata that haven't been processed (status_penerimaan is null)
+        $query = BiodataSantri::where('status','verified')
+            ->where(function ($q) use ($jenjang) {
+                $q->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $jenjang . '%'])
+                  ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);
             });
 
-        // Search functionality - search through biodataSantri relationship
+        // Search functionality
         if ($request->has('search') && $request->search) {
             $search = $request->search;
-            $query->whereHas('biodataSantri', function ($q) use ($search) {
-                $q->where(function ($subQ) use ($search) {
-                    $subQ->where('nama_lengkap', 'like', "%{$search}%")
-                         ->orWhere('nik_calon_santri', 'like', "%{$search}%")
-                         ->orWhere('tempat_lahir', 'like', "%{$search}%");
-                });
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('nik_calon_santri', 'like', "%{$search}%")
+                  ->orWhere('tempat_lahir', 'like', "%{$search}%");
             });
         }
 
@@ -62,6 +58,7 @@ class AdminPendaftaranController extends Controller
             ->withQueryString();
 
         $admins = User::where('role', 'admin')->get(['id', 'name']);
+        $periodes = Periode::orderBy('tahun_periode_penerimaan', 'desc')->get();
 
         return view('admin.pendaftaran.index', [
             'pendaftarans' => $pendaftarans,
@@ -69,6 +66,7 @@ class AdminPendaftaranController extends Controller
             'jenjangLabel' => $jenjangLabel,
             'search' => $request->query('search', ''),
             'admins' => $admins,
+            'periodes' => $periodes,
         ]);
     }
 
@@ -102,35 +100,61 @@ class AdminPendaftaranController extends Controller
     {
         $request->validate([
             'admin_id' => 'required|exists:users,id',
+            'periode_id' => 'required|exists:periodes,id',
             'pendaftaran_ids' => 'required|array',
-            'pendaftaran_ids.*' => 'exists:pendaftarans,id',
+            'pendaftaran_ids.*' => 'exists:biodata_santris,id',
             'action' => 'required|in:diterima,ditolak',
         ]);
 
         $adminId = $request->admin_id;
-        $pendaftaranIds = $request->pendaftaran_ids;
+        $periodeId = $request->periode_id;
+        $biodataIds = $request->pendaftaran_ids;
         $action = $request->action;
 
+        // Validasi kuota jika action adalah diterima
+        if ($action === 'diterima') {
+            $periode = Periode::findOrFail($periodeId);
+            $jumlahDiterima = count($biodataIds);
+            
+            // Hitung total yang sudah diterima di periode ini
+            $sudahDiterima = DetailRiwayatPenerimaan::whereHas('riwayatPenerimaan', function ($query) use ($periodeId) {
+                    $query->where('periode_id', $periodeId);
+                })
+                ->whereHas('biodataSantri', function ($q) {
+                    $q->where('status_penerimaan', 'diterima');
+                })
+                ->count();
+
+            // Validasi kuota
+            if (($sudahDiterima + $jumlahDiterima) > $periode->kuota_penerimaan) {
+                $kuotaTersisa = $periode->kuota_penerimaan - $sudahDiterima;
+                return redirect()->back()
+                    ->with('error', "Kuota penerimaan untuk periode {$periode->tahun_periode_penerimaan} tidak mencukupi. Kuota tersedia: {$kuotaTersisa}, yang dipilih: {$jumlahDiterima}")
+                    ->withInput();
+            }
+        }
+
         // Count diterima and ditolak
-        $totalDiterima = $action === 'diterima' ? count($pendaftaranIds) : 0;
-        $totalDitolak = $action === 'ditolak' ? count($pendaftaranIds) : 0;
+        $totalDiterima = $action === 'diterima' ? count($biodataIds) : 0;
+        $totalDitolak = $action === 'ditolak' ? count($biodataIds) : 0;
 
         // Create riwayat penerimaan
         $riwayat = RiwayatPenerimaan::create([
             'admin_id' => $adminId,
+            'periode_id' => $periodeId,
             'total_diterima' => $totalDiterima,
             'total_ditolak' => $totalDitolak,
         ]);
 
-        // Update status pendaftaran and create detail
-        foreach ($pendaftaranIds as $pendaftaranId) {
-            Pendaftaran::where('id', $pendaftaranId)->update([
-                'status' => $action,
+        // Update status_penerimaan biodata and create detail
+        foreach ($biodataIds as $biodataId) {
+            BiodataSantri::where('id', $biodataId)->update([
+                'status_penerimaan' => $action,
             ]);
 
             DetailRiwayatPenerimaan::create([
                 'riwayat_penerimaan_id' => $riwayat->id_penerimaan,
-                'id_pendaftaran' => $pendaftaranId,
+                'biodata_santri_id' => $biodataId,
             ]);
         }
 
