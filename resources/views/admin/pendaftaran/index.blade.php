@@ -267,7 +267,9 @@
             </div>
             <div class="modal-footer border-0 pt-3">
                 <div class="d-flex justify-content-between w-100 align-items-center">
-                   
+                    <button type="button" class="btn btn-outline-secondary" id="btnTolak" disabled>
+                        Tolak Pendaftaran
+                    </button>
                     <button type="button" class="btn btn-success" id="btnKonfirmasi" disabled>
                         Konfirmasi Kelulusan
                     </button>
