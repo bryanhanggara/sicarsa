@@ -29,14 +29,12 @@ class AdminKelulusanController extends Controller
 
         $jenjangLabel = $jenjangLabels[$jenjang];
 
-        // Query riwayat penerimaan yang memiliki detail dengan biodata sesuai jenjang
-        $query = RiwayatPenerimaan::with(['admin', 'details.biodataSantri'])
-            ->whereHas('details', function ($detailQ) use ($jenjang) {
-                $detailQ->whereHas('biodataSantri', function ($q) use ($jenjang) {
-                    $q->where(function ($subQ) use ($jenjang) {
-                        $subQ->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . Str::lower($jenjang) . '%'])
-                             ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);
-                    });
+        // Query riwayat penerimaan yang memiliki biodata sesuai jenjang
+        $query = RiwayatPenerimaan::with(['admin', 'biodataSantris'])
+            ->whereHas('biodataSantris', function ($q) use ($jenjang) {
+                $q->where(function ($subQ) use ($jenjang) {
+                    $subQ->whereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . Str::lower($jenjang) . '%'])
+                         ->orWhereRaw('LOWER(tujuan_jenjang_pendidikan) LIKE ?', ['%' . $this->getJenjangFullName($jenjang) . '%']);
                 });
             });
 
@@ -84,10 +82,10 @@ class AdminKelulusanController extends Controller
     {
         $riwayatPenerimaan->load([
             'admin',
-            'details.biodataSantri'
+            'biodataSantris'
         ]);
 
-        // Get jenjang from first detail's biodata (for breadcrumb/filter)
+        // Get jenjang from first biodata (for breadcrumb/filter)
         $jenjang = 'mi';
         $jenjangLabels = [
             'mi' => 'Madrasah Ibtidaiyyah',
@@ -95,8 +93,8 @@ class AdminKelulusanController extends Controller
             'ma' => 'Madrasah Aliyah',
         ];
 
-        if ($riwayatPenerimaan->details->isNotEmpty()) {
-            $firstBiodata = $riwayatPenerimaan->details->first()->biodataSantri ?? null;
+        if ($riwayatPenerimaan->biodataSantris->isNotEmpty()) {
+            $firstBiodata = $riwayatPenerimaan->biodataSantris->first();
             if ($firstBiodata && $firstBiodata->tujuan_jenjang_pendidikan) {
                 $tujuan = Str::lower($firstBiodata->tujuan_jenjang_pendidikan);
                 if (Str::contains($tujuan, 'mi') || Str::contains($tujuan, 'ibtidaiyyah')) {
@@ -113,13 +111,26 @@ class AdminKelulusanController extends Controller
 
         // Search functionality
         $search = $request->query('search', '');
-        $details = $riwayatPenerimaan->details;
+        $biodataSantris = $riwayatPenerimaan->biodataSantris;
+
+        // Filter by jenjang if provided in query
+        $jenjangFilter = $request->query('jenjang');
+        if ($jenjangFilter && in_array($jenjangFilter, ['mi', 'mts', 'ma'])) {
+            $biodataSantris = $biodataSantris->filter(function ($biodata) use ($jenjangFilter) {
+                $tujuan = Str::lower($biodata->tujuan_jenjang_pendidikan ?? '');
+                if ($jenjangFilter === 'mi') {
+                    return Str::contains($tujuan, 'mi') || Str::contains($tujuan, 'ibtidaiyyah');
+                } elseif ($jenjangFilter === 'mts') {
+                    return Str::contains($tujuan, 'mts') || Str::contains($tujuan, 'tsanawiyah');
+                } elseif ($jenjangFilter === 'ma') {
+                    return Str::contains($tujuan, 'ma') || Str::contains($tujuan, 'aliyah');
+                }
+                return true;
+            });
+        }
 
         if ($search) {
-            $details = $details->filter(function ($detail) use ($search) {
-                $biodata = $detail->biodataSantri ?? null;
-                if (!$biodata) return false;
-                
+            $biodataSantris = $biodataSantris->filter(function ($biodata) use ($search) {
                 return Str::contains(Str::lower($biodata->nama_lengkap ?? ''), Str::lower($search))
                     || Str::contains($biodata->nik_calon_santri ?? '', $search)
                     || Str::contains(Str::lower($biodata->tempat_lahir ?? ''), Str::lower($search));
@@ -128,7 +139,7 @@ class AdminKelulusanController extends Controller
 
         return view('admin.kelulusan.show', [
             'riwayat' => $riwayatPenerimaan,
-            'details' => $details,
+            'details' => $biodataSantris,
             'jenjang' => $jenjang,
             'jenjangLabel' => $jenjangLabel,
             'search' => $search,

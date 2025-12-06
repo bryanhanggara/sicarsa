@@ -46,6 +46,7 @@ class BiodataSantri extends Model
         'status',
         'bukti_pembayaran',
         'status_penerimaan',
+        'riwayat_penerimaan_id',
     ];
 
     protected function casts(): array
@@ -60,5 +61,10 @@ class BiodataSantri extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function riwayatPenerimaan(): BelongsTo
+    {
+        return $this->belongsTo(RiwayatPenerimaan::class, 'riwayat_penerimaan_id', 'id_penerimaan');
     }
 }

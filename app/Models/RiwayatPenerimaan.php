@@ -30,9 +30,9 @@ class RiwayatPenerimaan extends Model
         return $this->belongsTo(Periode::class);
     }
 
-    public function details(): HasMany
+    public function biodataSantris(): HasMany
     {
-        return $this->hasMany(DetailRiwayatPenerimaan::class, 'riwayat_penerimaan_id', 'id_penerimaan');
+        return $this->hasMany(BiodataSantri::class, 'riwayat_penerimaan_id', 'id_penerimaan');
     }
 
     /**

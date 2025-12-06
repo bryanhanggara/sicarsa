@@ -110,34 +110,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($details as $detail)
+                            @forelse($details as $biodata)
                                 @php
-                                    $biodata = $detail->biodataSantri ?? null;
-                                    $idPendaftaran = $biodata ? str_pad($biodata->id, 8, '0', STR_PAD_LEFT) : '-';
+                                    $idPendaftaran = str_pad($biodata->id, 8, '0', STR_PAD_LEFT);
                                 @endphp
-                                @if($biodata)
-                                    <tr>
-                                        <td class="px-4 py-3 border-0">{{ $idPendaftaran }}</td>
-                                        <td class="px-4 py-3 border-0">{{ $biodata->nama_lengkap }}</td>
-                                        <td class="px-4 py-3 border-0">{{ $biodata->nik_calon_santri }}</td>
-                                        <td class="px-4 py-3 border-0">{{ $biodata->tempat_lahir }}</td>
-                                        <td class="px-4 py-3 border-0">{{ $biodata->tanggal_lahir ? $biodata->tanggal_lahir->format('d-m-Y') : '-' }}</td>
-                                        <td class="px-4 py-3 border-0 text-center">
-                                            <a href="{{ route('admin.santri.show', $biodata->id) }}" class="btn btn-link text-decoration-none p-0" title="Lihat Data Diri">
+                                <tr>
+                                    <td class="px-4 py-3 border-0">{{ $idPendaftaran }}</td>
+                                    <td class="px-4 py-3 border-0">{{ $biodata->nama_lengkap }}</td>
+                                    <td class="px-4 py-3 border-0">{{ $biodata->nik_calon_santri }}</td>
+                                    <td class="px-4 py-3 border-0">{{ $biodata->tempat_lahir }}</td>
+                                    <td class="px-4 py-3 border-0">{{ $biodata->tanggal_lahir ? $biodata->tanggal_lahir->format('d-m-Y') : '-' }}</td>
+                                    <td class="px-4 py-3 border-0 text-center">
+                                        <a href="{{ route('admin.santri.show', $biodata->id) }}" class="btn btn-link text-decoration-none p-0" title="Lihat Data Diri">
+                                            <i class="fas fa-eye text-success" style="font-size: 1.1rem;"></i>
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-3 border-0 text-center">
+                                        @if($biodata->bukti_pembayaran)
+                                            <a href="{{ Storage::url($biodata->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Bukti Pembayaran">
                                                 <i class="fas fa-eye text-success" style="font-size: 1.1rem;"></i>
                                             </a>
-                                        </td>
-                                        <td class="px-4 py-3 border-0 text-center">
-                                            @if($biodata->bukti_pembayaran)
-                                                <a href="{{ Storage::url($biodata->bukti_pembayaran) }}" target="_blank" class="btn btn-link text-decoration-none p-0" title="Lihat Bukti Pembayaran">
-                                                    <i class="fas fa-eye text-success" style="font-size: 1.1rem;"></i>
-                                                </a>
-                                            @else
-                                                <span class="text-muted small">-</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
+                                        @else
+                                            <span class="text-muted small">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
                             @empty
                                 <tr>
                                     <td colspan="7" class="px-4 py-5 text-center text-muted">

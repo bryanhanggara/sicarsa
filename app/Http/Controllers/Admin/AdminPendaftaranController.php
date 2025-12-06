@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BiodataSantri;
 use App\Models\RiwayatPenerimaan;
-use App\Models\DetailRiwayatPenerimaan;
 use App\Models\Periode;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -117,12 +116,10 @@ class AdminPendaftaranController extends Controller
             $jumlahDiterima = count($biodataIds);
             
             // Hitung total yang sudah diterima di periode ini
-            $sudahDiterima = DetailRiwayatPenerimaan::whereHas('riwayatPenerimaan', function ($query) use ($periodeId) {
+            $sudahDiterima = BiodataSantri::whereHas('riwayatPenerimaan', function ($query) use ($periodeId) {
                     $query->where('periode_id', $periodeId);
                 })
-                ->whereHas('biodataSantri', function ($q) {
-                    $q->where('status_penerimaan', 'diterima');
-                })
+                ->where('status_penerimaan', 'diterima')
                 ->count();
 
             // Validasi kuota
@@ -146,15 +143,11 @@ class AdminPendaftaranController extends Controller
             'total_ditolak' => $totalDitolak,
         ]);
 
-        // Update status_penerimaan biodata and create detail
+        // Update status_penerimaan biodata and set riwayat_penerimaan_id
         foreach ($biodataIds as $biodataId) {
             BiodataSantri::where('id', $biodataId)->update([
                 'status_penerimaan' => $action,
-            ]);
-
-            DetailRiwayatPenerimaan::create([
                 'riwayat_penerimaan_id' => $riwayat->id_penerimaan,
-                'biodata_santri_id' => $biodataId,
             ]);
         }
 
