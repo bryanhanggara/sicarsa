@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
             ? route('admin.dashboard', absolute: false)
             : route('biodata-santri.index', absolute: false);
 
-        return redirect()->intended($redirectRoute);
+        return redirect($redirectRoute);
     }
 
     /**
