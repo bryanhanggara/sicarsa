@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Biodata Santri')
+@section('title', 'Detail Biodata Calon Santri')
 
 @php
     use Illuminate\Support\Facades\Storage;
@@ -22,7 +22,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <p class="text-success text-uppercase small fw-semibold mb-1">Pondok Pesantren Al-Falah Putak</p>
-                <h1 class="h3 fw-bold text-dark mb-1">Detail Biodata Santri</h1>
+                <h1 class="h3 fw-bold text-dark mb-1">Detail Biodata Calon Santri</h1>
                 <p class="text-muted mb-0">Tinjau data lengkap calon santri sebelum proses verifikasi.</p>
             </div>
             <a href="{{ url()->previous() }}" class="btn btn-outline-success">

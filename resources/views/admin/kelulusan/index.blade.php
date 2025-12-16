@@ -87,7 +87,7 @@
                                 <tr>
                                     <td colspan="6" class="px-4 py-5 text-center text-muted">
                                         <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                        <p class="mb-0">Tidak ada riwayat penerimaan untuk jenjang ini.</p>
+                                        <p class="mb-0">Tidak ada seleksi penerimaan untuk jenjang ini.</p>
                                     </td>
                                 </tr>
                             @endforelse

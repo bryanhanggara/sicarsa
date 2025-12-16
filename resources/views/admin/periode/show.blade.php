@@ -69,10 +69,10 @@
             </div>
         </div>
 
-        <!-- Riwayat Penerimaan -->
+        <!-- Seleksi Penerimaan -->
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="mb-0 fw-semibold">Riwayat Penerimaan</h5>
+                <h5 class="mb-0 fw-semibold">Seleksi Penerimaan</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -109,7 +109,7 @@
                                 <tr>
                                     <td colspan="6" class="px-4 py-5 text-center text-muted">
                                         <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                        <p class="mb-0">Belum ada riwayat penerimaan untuk periode ini.</p>
+                                        <p class="mb-0">Belum ada seleksi penerimaan untuk periode ini.</p>
                                     </td>
                                 </tr>
                             @endforelse

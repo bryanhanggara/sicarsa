@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class AdminKelulusanController extends Controller
 {
     /**
-     * Display riwayat penerimaan per jenjang.
+    * Display seleksi penerimaan per jenjang.
      */
     public function index(Request $request)
     {
@@ -29,7 +29,7 @@ class AdminKelulusanController extends Controller
 
         $jenjangLabel = $jenjangLabels[$jenjang];
 
-        // Query riwayat penerimaan yang memiliki biodata sesuai jenjang
+        // Query seleksi penerimaan yang memiliki biodata sesuai jenjang
         $query = RiwayatPenerimaan::with(['admin', 'biodataSantris'])
             ->whereHas('biodataSantris', function ($q) use ($jenjang) {
                 $q->where(function ($subQ) use ($jenjang) {
@@ -76,7 +76,7 @@ class AdminKelulusanController extends Controller
     }
 
     /**
-     * Display detail riwayat penerimaan.
+    * Display detail seleksi penerimaan.
      */
     public function show(RiwayatPenerimaan $riwayatPenerimaan, Request $request)
     {

@@ -33,7 +33,7 @@ class AdminPendaftaranController extends Controller
 
         $jenjangLabel = $jenjangLabels[$jenjang];
 
-        // Query biodata santri and filter by jenjang
+        // Query biodata calon santri and filter by jenjang
         // Only show biodata that haven't been processed (status_penerimaan is null)
         $query = BiodataSantri::where('status','verified')
             ->where(function ($q) use ($jenjang) {
@@ -101,7 +101,7 @@ class AdminPendaftaranController extends Controller
             'admin_id' => 'required|exists:users,id',
             'periode_id' => 'required|exists:periodes,id',
             'pendaftaran_ids' => 'required|array',
-            'pendaftaran_ids.*' => 'exists:biodata_santris,id',
+            'pendaftaran_ids.*' => 'exists:calon_santris,id',
             'action' => 'required|in:diterima,ditolak',
         ]);
 

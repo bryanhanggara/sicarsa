@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BiodataSantri extends Model
 {
+    /**
+     * The table associated with the model.
+     */
+    protected $table = 'calon_santris';
+
     protected $fillable = [
         'user_id',
         'foto',

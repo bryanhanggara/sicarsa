@@ -59,7 +59,7 @@ class AdminVerifikasiController extends Controller
     {
         $validated = $request->validate([
             'biodata_ids' => ['required', 'array'],
-            'biodata_ids.*' => ['exists:biodata_santris,id'],
+            'biodata_ids.*' => ['exists:calon_santris,id'],
         ]);
 
         BiodataSantri::whereIn('id', $validated['biodata_ids'])

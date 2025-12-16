@@ -224,7 +224,7 @@
             </div>
             
             <!-- Kelola Berita -->
-            <a href="#" 
+            <a href="{{ route('admin.berita.index') }}" 
                class="d-flex align-items-center px-3 py-2 rounded text-decoration-none transition text-dark hover-bg-light">
                 <i class="fas fa-newspaper me-3" style="width: 20px; color: #129990;"></i>
                 <span class="fw-medium">Kelola Berita</span>

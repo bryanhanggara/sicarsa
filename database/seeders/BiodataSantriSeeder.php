@@ -12,7 +12,7 @@ use Illuminate\Support\Arr;
 class BiodataSantriSeeder extends Seeder
 {
     /**
-     * Seed dummy biodata santri records for dashboard visualisation.
+     * Seed dummy biodata calon santri records for dashboard visualisation.
      */
     public function run(): void
     {

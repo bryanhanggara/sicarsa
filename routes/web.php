@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Biodata Santri Routes
+    // Biodata Calon Santri Routes
     Route::get('/dashboard', [BiodataSantriController::class, 'index'])->name('biodata-santri.index');
     Route::post('/biodata-santri', [BiodataSantriController::class, 'store'])->name('biodata-santri.store');
     Route::get('/pembayaran', [PembayaranSantriController::class, 'index'])->name('pembayaran.index');

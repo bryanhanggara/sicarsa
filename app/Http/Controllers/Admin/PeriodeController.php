@@ -85,10 +85,10 @@ class PeriodeController extends Controller
      */
     public function destroy(Periode $periode): RedirectResponse
     {
-        // Check if periode has riwayat penerimaan
+        // Check if periode has seleksi penerimaan
         if ($periode->riwayatPenerimaans()->count() > 0) {
             return redirect()->route('admin.periode.index')
-                ->with('error', 'Periode tidak dapat dihapus karena sudah memiliki riwayat penerimaan.');
+                ->with('error', 'Periode tidak dapat dihapus karena sudah memiliki seleksi penerimaan.');
         }
 
         $periode->delete();

@@ -11,6 +11,11 @@ class RiwayatPenerimaan extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     */
+    protected $table = 'seleksi_penerimaans';
+
     protected $primaryKey = 'id_penerimaan';
 
     protected $fillable = [

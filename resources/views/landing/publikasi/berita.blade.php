@@ -7,6 +7,14 @@
     $activeMenu = 'berita';
 @endphp
 
+@push('styles')
+    <style>
+        .hero-overlay {
+            background: rgba(0, 0, 0, 0.45);
+        }
+    </style>
+@endpush
+
 @section('content')
 <main class="py-5">
     <div class="container">
@@ -48,7 +56,7 @@
                         @else
                             <img src="{{ asset('fe_sicarsa/assets/berita-hero.png') }}" class="card-img hero-news-img" alt="Berita">
                         @endif
-                        <div class="card-img-overlay p-4">
+                        <div class="card-img-overlay p-4 hero-overlay">
                             <span class="badge-utama mt-1">Berita Utama</span>
                             <h2 class="fw-bold justify-text mt-4">{{ $beritaUtama->judul }}</h2>
                             <p class="mt-4 mb-0 text-hero-news">{{ \Illuminate\Support\Str::limit(strip_tags($beritaUtama->isi), 200) }}</p>
@@ -115,3 +123,4 @@
     </div>
 </main>
 @endsection
+

@@ -25,7 +25,7 @@ class BiodataSantriController extends Controller
     }
 
     /**
-     * Store biodata santri.
+     * Store biodata calon santri.
      */
     public function store(StoreBiodataSantriRequest $request): RedirectResponse
     {

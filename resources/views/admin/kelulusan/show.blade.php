@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Riwayat Penerimaan')
+@section('title', 'Detail Seleksi Penerimaan')
 
 @php
     use Illuminate\Support\Facades\Storage;
