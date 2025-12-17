@@ -87,7 +87,8 @@ Route::middleware(['auth', 'admin'])
         Route::resource('periode', PeriodeController::class);
         
         // Berita CRUD Routes
-        Route::resource('berita', AdminBeritaController::class);
+        Route::resource('berita', AdminBeritaController::class)
+            ->parameters(['berita' => 'berita']);
     });
 
 require __DIR__.'/auth.php';
